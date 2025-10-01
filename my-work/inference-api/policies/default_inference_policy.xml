@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policies>
+    <inbound>
+        <base />
+        <!-- Set the backend service -->
+        <set-backend-service backend-id="{backend-id}" />
+        
+        <!-- Authenticate using managed identity for Azure AI Foundry -->
+        <authentication-managed-identity resource="https://cognitiveservices.azure.com" 
+        output-token-variable-name="managed-id-access-token" ignore-error="false" />
+        
+        <!-- Ensure proper content type -->
+        <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
+        </set-header>
+        
+        <set-header name="Authorization" exists-action="override">
+            <value>@("Bearer " + (string)context.Variables["managed-id-access-token"])</value>
+        </set-header>
+        
+        <!-- Basic rate limiting -->
+        <rate-limit calls="100" renewal-period="60" />
+    </inbound>
+    
+    <backend>
+        <base />
+    </backend>
+    
+    <outbound>
+        <base />
+        <!-- Add request ID for tracking -->
+        <set-header name="X-Request-Id" exists-action="override">
+            <value>@(context.RequestId.ToString())</value>
+        </set-header>
+    </outbound>
+    
+    <on-error>
+        <base />
+    </on-error>
+</policies>
