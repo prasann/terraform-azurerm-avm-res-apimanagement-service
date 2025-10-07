@@ -2,41 +2,36 @@
 
 ## Executive Summary
 
-This document analyzes the existing work in `my-work/inference-api/` and compares it against the full implementation plan for achieving Bicep module parity. The existing work provides a solid foundation for PR 4 (Inference Specialization) but requires significant additional development for PR 1-3.
+This document analyzes the existing work in `my-work/inference-api/` and compares it against the updated implementation plan for achieving Bicep module parity (focusing on generic APIM features only). **With the removal of inference-specific features from the plan, the existing work has significantly reduced utility**, providing mainly reference patterns rather than reusable components.
 
 ## Current Implementation Analysis
 
-### ✅ What's Already Implemented (my-work/inference-api/)
+### ✅ What's Useful from Existing Work (my-work/inference-api/)
 
-**Core Infrastructure (Partial):**
-- ✅ `azurerm_api_management_api` resource for inference APIs
-- ✅ `azurerm_api_management_api_policy` with XML policy support
-- ✅ `azurerm_api_management_backend` for AI service backends
-- ✅ `azurerm_api_management_api_diagnostic` for monitoring
+**Reference Patterns Only (Limited Utility):**
+- ✅ `azurerm_api_management_api` resource pattern (needs generalization for non-inference APIs)
+- ✅ `azurerm_api_management_api_policy` XML policy structure (basic pattern only)
+- ✅ `azurerm_api_management_backend` resource pattern (basic structure)
+- ✅ `azurerm_api_management_api_diagnostic` monitoring setup (partially relevant)
 
-**AI/ML Specialization (Strong Foundation):**
-- ✅ Pre-built OpenAPI specs for Azure OpenAI and Azure AI Foundry
-- ✅ Inference-specific policy with managed identity authentication
-- ✅ Multi-model backend configuration support
-- ✅ Load balancing logic for multiple AI services
-- ✅ Circuit breaker configuration options
-- ✅ Application Insights and Azure Monitor integration
+**Development Patterns (Moderate Utility):**
+- ✅ Variable validation approach and structure
+- ✅ Documentation format and README structure
+- ✅ Lifecycle management patterns (`prevent_destroy`)
+- ✅ Resource dependency management approach
 
-**Security Features (Basic):**
-- ✅ Managed identity authentication for Azure AI services
-- ✅ Bearer token authentication pattern
-- ✅ Basic rate limiting (100 calls/60 seconds)
-- ✅ Secure header management
+**Not Applicable for Bicep Parity:**
+- ❌ Pre-built OpenAPI specs for Azure OpenAI/AI Foundry (inference-specific)
+- ❌ Inference-specific policies and authentication (not in Bicep scope)
+- ❌ Multi-model backend configuration (inference-specific)
+- ❌ Load balancing logic for AI services (not generic)
+- ❌ Circuit breaker configuration (inference-specific)
+- ❌ AI-specific monitoring and token tracking (not in Bicep scope)
 
-**Quality & Documentation:**
-- ✅ Comprehensive variable validation
-- ✅ Detailed README with usage examples
-- ✅ Lifecycle management (`prevent_destroy`)
-- ✅ Proper resource dependencies
+### ❌ What's Missing for Full Bicep Parity (All New Development Required)
 
-### ❌ What's Missing for Full Bicep Parity
+#### PR 1: Core API Management (100% New Development)
 
-**PR 1: Core API Management (Major Gap)**
 - ❌ Generic API creation (non-inference APIs)
 - ❌ API Operations resource (`azurerm_api_management_api_operation`)
 - ❌ Products resource (`azurerm_api_management_product`)
@@ -44,18 +39,20 @@ This document analyzes the existing work in `my-work/inference-api/` and compare
 - ❌ Subscriptions resource (`azurerm_api_management_subscription`)
 - ❌ Named Values resource (`azurerm_api_management_named_value`)
 - ❌ Global policies and operation-level policies
-- ❌ OpenAPI import beyond inference APIs
+- ❌ Generic OpenAPI/SOAP/GraphQL import
 
-**PR 2: Backend Integration (Moderate Gap)**
+#### PR 2: Backend Integration (100% New Development)
+
 - ❌ Generic backend support (HTTP/SOAP, Service Fabric, Function Apps)
 - ❌ Backend TLS configuration and certificate validation
 - ❌ Caches resource (`azurerm_api_management_cache`)
 - ❌ Loggers resource (`azurerm_api_management_logger`)
-- ❌ Backend credential management beyond managed identity
+- ❌ Generic backend credential management
 - ❌ Backend proxy configuration
 - ❌ Service Fabric cluster support
 
-**PR 3: Security & Identity (Major Gap)**
+#### PR 3: Security & Identity (100% New Development)
+
 - ❌ Authorization Servers (`azurerm_api_management_authorization_server`)
 - ❌ Identity Providers (AAD, AAD B2C, Google, Facebook, etc.)
 - ❌ API Version Sets (`azurerm_api_management_api_version_set`)
@@ -63,14 +60,6 @@ This document analyzes the existing work in `my-work/inference-api/` and compare
 - ❌ JWT token validation
 - ❌ Client certificate authentication
 - ❌ Portal settings and delegation
-
-**Infrastructure & Security Hardening:**
-- ❌ Premium SKU defaults and cipher configuration
-- ❌ Client certificate enforcement
-- ❌ VNet integration support
-- ❌ Key Vault integration for secrets
-- ❌ Advanced audit logging
-- ❌ Portal delegation and validation keys
 
 ## Implementation Strategy
 
@@ -106,49 +95,59 @@ This document analyzes the existing work in `my-work/inference-api/` and compare
 - Add API versioning support
 - Enterprise security controls
 
-## Resource Reusability Assessment
+## Resource Reusability Assessment (Updated for Bicep Parity Focus)
 
-### High Reusability (90%+ reusable)
-- OpenAPI specification files (AIFoundryAzureAI.json, AIFoundryOpenAI.json)
-- Policy XML templates and authentication patterns
-- Backend configuration logic
-- Diagnostic and monitoring setup
-- Variable validation patterns
+### Limited Reference Value (20-30% reusable)
 
-### Moderate Reusability (50-70% reusable)
-- Main Terraform resource configurations (need generalization)
-- Documentation structure and examples
-- Testing and validation approaches
+- Variable validation patterns and structure
+- Documentation format and README approach
+- Resource dependency management patterns
+- Basic Terraform resource syntax examples
 
-### Low Reusability (requires new development)
+### Not Applicable (0% reusable)
+
+- OpenAPI specification files (AIFoundryAzureAI.json, AIFoundryOpenAI.json) - inference-specific
+- Policy XML templates and authentication patterns - inference-specific
+- Backend configuration logic - AI service specific
+- Diagnostic and monitoring setup - inference-focused
+- Main Terraform resource configurations - too specialized for inference
+
+### Requires Complete New Development (100% new)
+
 - Products, Subscriptions, and Named Values
 - Authorization servers and identity providers
 - API Version Sets and versioning logic
+- Generic API creation and operations
+- Generic backend support (HTTP/SOAP/Service Fabric)
+- Caches and Loggers
 - Advanced security configurations
 
-## Recommended Development Sequence
+## Recommended Development Sequence (Updated)
 
-### Option 1: Inference-First Approach
-1. **Start with PR 4** using existing `my-work` assets
-2. Validate inference API patterns work with main module
-3. Build PR 1-3 to support broader API management scenarios
-4. **Advantage:** Quick wins, immediate business value
+### Only Viable Approach: Foundation-First
 
-### Option 2: Foundation-First Approach
-1. **Start with PR 1** building core API management
-2. Extend with PR 2-3 for complete enterprise features
-3. Integrate `my-work` assets in PR 4
-4. **Advantage:** Logical progression, comprehensive testing
+1. **Start with PR 1** - Core API Management (100% new development)
+2. **Continue with PR 2** - Backend Integration (100% new development)
+3. **Complete with PR 3** - Security & Identity (100% new development)
+4. **Optional:** Use `my-work` patterns as reference for variable validation and documentation structure
 
-## Effort Estimation
+**Rationale:** With inference features removed, there's no significant reusable code from `my-work` to build upon.
 
-**Low Effort (existing work):**
-- PR 4 inference specialization: ~20% new development needed
+## Effort Estimation (Updated)
 
-**High Effort (new development):**
-- PR 1 core API management: ~80% new development
-- PR 2 backend integration: ~70% new development
-- PR 3 security & identity: ~90% new development
+**All New Development Required:**
+
+- PR 1 Core API Management: ~100% new development
+- PR 2 Backend Integration: ~100% new development
+- PR 3 Security & Identity: ~100% new development
+
+**Limited Reference Value from my-work:**
+
+- Variable validation patterns: ~10% time savings
+- Documentation structure: ~5% time savings
+- Resource dependency patterns: ~5% time savings
+
+**Total Utility of my-work: ~5-10% time savings through reference patterns only**
 
 ## Integration Steps for my-work into Main Repository
 
@@ -501,6 +500,22 @@ export PORCH_NO_TUI=1
 
 ## Conclusion
 
-The existing `my-work/inference-api/` provides excellent foundation for inference API capabilities (PR 1) with production-ready OpenAPI specs, authentication patterns, and multi-backend support. The integration requires careful alignment with AVM patterns but preserves the core functionality while making it accessible through the main module's interface.
+With the updated plan focusing strictly on Bicep parity (generic APIM features only), the existing `my-work/inference-api/` has **very limited utility**. The work is highly specialized for AI/ML inference scenarios and doesn't align with the generic API management capabilities required for Bicep parity.
 
-**Recommendation:** Follow the phased integration approach above to systematically incorporate the inference API work into the main module while maintaining AVM compliance and backward compatibility.
+### Key Findings
+
+- **95-98% of my-work content is not applicable** to the Bicep parity plan
+- **Only reference patterns** (variable validation, documentation structure) provide minimal value
+- **All core functionality requires new development** from scratch
+- **Integration effort would exceed building from scratch**
+
+### Updated Recommendation
+
+**Do not integrate my-work into the main module.** Instead:
+
+1. Use `my-work` as a **reference only** for development patterns
+2. Build all PR 1-3 features from scratch using generic Bicep module requirements
+3. Consider `my-work` as a separate specialized module for AI/ML scenarios
+4. Focus development effort on the 100% new development required for Bicep parity
+
+The integration approach detailed above is **no longer recommended** given the minimal utility of existing work.

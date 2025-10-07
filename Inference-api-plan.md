@@ -11,20 +11,7 @@ This plan implements feature parity with the Bicep AVM module to address GitHub 
 
 ## Implementation Approach
 
-### PR 1: Inference API Foundation
-
-**Business Value:** Production AI/ML API gateway with enterprise patterns
-**Components:**
-
-- Pre-configured OpenAI and Azure AI Foundry API specifications
-- Inference-specific policies for token counting and model routing
-- Multi-model deployment patterns with load balancing
-- AI-specific monitoring and cost management
-- Managed identity authentication for AI services
-
-**Key Features:** OpenAI SDK compatibility, token-based billing, real-time inference monitoring
-
-### PR 2: Core API Management
+### PR 1: Core API Management
 
 **Business Value:** Complete API lifecycle management
 **Components:**
@@ -38,7 +25,7 @@ This plan implements feature parity with the Bicep AVM module to address GitHub 
 
 **Key Security Features:** Client certificate support, secure cipher configurations, policy-based validation
 
-### PR 3: Backend Integration
+### PR 2: Backend Integration
 
 **Business Value:** Enterprise backend connectivity with observability
 **Components:**
@@ -51,7 +38,7 @@ This plan implements feature parity with the Bicep AVM module to address GitHub 
 
 **Key Security Features:** Backend credential management, secure connection strings, audit logging
 
-### PR 4: Security & Identity
+### PR 3: Security & Identity
 
 **Business Value:** Enterprise-grade authentication and governance
 **Components:**
@@ -90,7 +77,6 @@ This plan implements feature parity with the Bicep AVM module to address GitHub 
 - Full Bicep module feature parity with security-first approach
 - AVM compliance validated by pre-commit and PR-check processes
 - Comprehensive examples demonstrating enterprise patterns
-- OpenAI SDK compatibility validation for inference scenarios
 - End-to-end testing covering authentication, policies, and monitoring
 
 ## Implementation Requirements
